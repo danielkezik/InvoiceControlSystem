@@ -125,5 +125,10 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+LOGIN_REDIRECT_URL = 'index'
+LOGIN_URL = 'login'

@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.db import models
 from django.contrib.auth.models import User as DjangoUser
 from dateutil.relativedelta import relativedelta
@@ -20,7 +21,8 @@ class User(models.Model):
     ]
 
     user_class = models.CharField(max_length=2,
-                                  choices=USER_CLASS_CHOICES)
+                                  choices=USER_CLASS_CHOICES,
+                                  default=CLIENT)
     is_approved = models.BooleanField(default=False)
     is_blocked = models.BooleanField(default=False)
     balance = models.DecimalField(decimal_places=2, default=0,
@@ -40,10 +42,18 @@ class User(models.Model):
     def unpaid_invoices(self):
         return self.invoices.filter(is_paid=False)
 
+    @property
+    def full_name(self):
+        if self.user.first_name and self.user.last_name:
+            return self.user.get_full_name()
+        return self.user.username
+
 
 class Invoice(models.Model):
     client = models.ForeignKey(User, related_name='invoices',
                                null=True, on_delete=models.SET_NULL)
+
+    name = models.CharField(max_length=100, default='My invoice')
 
     YEARLY = 'Y'
     MONTHLY = 'M'
@@ -97,6 +107,7 @@ class Invoice(models.Model):
             return relativedelta(years=1)
 
     def pay(self, author: User):
+        # todo validation
         self.client.add_to_balance(-self.total)
         if self.is_regular:
             self.due_date += self.get_regular_delta()
@@ -105,6 +116,9 @@ class Invoice(models.Model):
         self.invoice_logs.create(paid_by=author)
         self.save()
 
+    def __str__(self):
+        return f"Invoice {self.name} till {self.due_date}"
+
 
 class InvoiceLog(models.Model):
     invoice = models.ForeignKey(Invoice, related_name='invoice_logs',
@@ -112,3 +126,8 @@ class InvoiceLog(models.Model):
     created_on = models.DateTimeField(default=datetime.now)
     paid_by = models.ForeignKey(User, related_name='paid_invoices',
                                 null=True, on_delete=models.SET_NULL)
+
+
+admin.site.register(User)
+admin.site.register(Invoice)
+admin.site.register(InvoiceLog)

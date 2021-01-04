@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for client in clients %}
+        <div>
+            <h2>{{ client.full_name }}</h2>
+            <ul>
+            {% for invoice in client.unpaid_invoices %}
+                <li><a href="{% url 'invoice_detail' invoice.id %}">{{ invoice.name }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+{% endblock content %}
