@@ -9,6 +9,7 @@ urlpatterns = [
     path(r'logout/', auth_views.LogoutView.as_view(template_name='logout.html'), name='logout'),
     path(r'balance/', views.AddBalance.as_view(), name='add_balance'),
     path(r'new_invoice/', views.NewInvoice.as_view(), name='new_invoice'),
-    path(r'my_clients/', views.ClientsList.as_view(), name='clients_list'),
+    path(r'my_clients/', views.ClientsList.as_view(), name='my_clients_list'),
     path(r'invoice/<int:pk>/', views.InvoiceDetailView.as_view(), name='invoice_detail'),
+    path(r'my_invoices/', views.InvoicesList.as_view(), name='my_invoices_list'),
 ]

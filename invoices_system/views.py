@@ -22,11 +22,13 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
+            form.instance.invoice_user.user_class = form.cleaned_data.get('user_class')
+            form.instance.invoice_user.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'Your account has been created! You are now able to log in')
             return redirect('login')
     else:
-        form = UserRegisterForm()
+        form = UserRegisterForm(initial={'user_class': User.CLIENT})
     return render(request, 'register.html', {'form': form})
 
 
@@ -107,6 +109,22 @@ class InvoiceDetailView(DetailView):
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
         invoice = Invoice.objects.get(pk=int(request.POST.get('invoice_id')))
-        invoice.pay(request.user.invoice_user)
+        try:
+            invoice.pay(request.user.invoice_user)
+        except ValueError as e:
+            messages.error(request, e, extra_tags='danger')
+            return self.render_to_response(context)
         messages.success(request, f'Invoice is paid')
         return redirect('index')
+
+
+class InvoicesList(ListView):
+    model = Invoice
+    template_name = 'invoices_list.html'
+    context_object_name = 'invoices'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        self.object_list = request.user.invoice_user.unpaid_invoices.all()
+        context = self.get_context_data()
+        return self.render_to_response(context)

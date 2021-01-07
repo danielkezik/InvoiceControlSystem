@@ -28,13 +28,15 @@ class User(models.Model):
     balance = models.DecimalField(decimal_places=2, default=0,
                                   max_digits=9)
 
-    managed_by = models.ForeignKey('self', related_name='clients',
+    managed_by = models.ForeignKey('self', related_name='clients', blank=True,
                                    null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"[{self.user_class}] {self.user.username}"
 
     def add_to_balance(self, money):
+        if self.balance+money < 0:
+            raise ValueError('Balance should not be less than 0')
         self.balance += money
         self.save()
 

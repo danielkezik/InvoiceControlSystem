@@ -1,28 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-
     <div class="list-group">
-    {% for client in clients %}
-        <div class="list-group-item">
-            <h2>{{ client.full_name }} ({{ client.user.username }})</h2>
-    <div class="list-group">
-        {% for invoice in client.unpaid_invoices %}
+        {% for invoice in invoices %}
             <a href="{% url 'invoice_detail' invoice.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">{{ invoice.name }}</h5>
                     <small>{{ invoice.due_date|date:'d.m.Y' }}</small>
                 </div>
                 <p class="mb-1">
+                    Type: {{ invoice.get_invoice_type_display }}<br/>
                     Total: {{ invoice.total }}&euro;
                 </p>
             </a>
             {% empty %}
-            <div class="list-group-item list-group-item-action flex-column align-items-start">
-                The client does not have pending invoices.
-            </div>
+            <a href="{% url 'new_invoice' %}" class="list-group-item list-group-item-action flex-column align-items-start">
+                The list is empty. You can create your first invoice.
+            </a>
         {% endfor %}
-    </div>
-        </div>
-    {% endfor %}
     </div>
 {% endblock content %}

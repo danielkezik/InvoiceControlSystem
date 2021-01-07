@@ -1,0 +1,20 @@
+<div class="col-md-4">
+    <div class="content-section">
+        <h3>{{ user.invoice_user.full_name }}</h3>
+            <p class='text-muted'>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-light">You are {{ user.invoice_user.get_user_class_display }}</li>
+                    {% if user.invoice_user.user_class == "CL" %}
+                        <li class="list-group-item list-group-item-light">Your balance: {{ user.invoice_user.balance }}&euro;</li>
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'my_invoices_list' %}">My invoices</a></li>
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'new_invoice' %}">New invoice</a></li>
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'add_balance' %}">Add balance</a></li>
+                    {% elif user.invoice_user.user_class == "MG" %}
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'my_clients_list' %}">My clients</a></li>
+                    {% elif user.invoice_user.user_class == "MR" %}
+                        <li class="list-group-item list-group-item-light"><a href="{% url 'admin:index' %}">Admin panel</a></li>
+                    {% endif %}
+                </ul>
+            </p>
+    </div>
+</div>

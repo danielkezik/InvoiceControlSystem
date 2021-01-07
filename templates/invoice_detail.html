@@ -1,12 +1,43 @@
 {% extends "base.html" %}
+{% block styles_import %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/date_icon.css' %}">
+    <script src="{% static 'js/date_icon.js' %}"></script>
+{% endblock %}
 {% block content %}
-    {{ invoice.name }}<br>
-    {{ invoice.get_invoice_type_display }}<br>
-    {{ invoice.due_date }}<br>
-    {{ invoice.total }}<br>
-    <form method="post" action=".">
-        {% csrf_token %}
-        <input type="hidden" name="invoice_id" value="{{ invoice.id }}">
-        <button class="btn btn-outline-info" type="submit">Pay</button>
-    </form>
+    <div class="content-section">
+        <h2>{{ invoice.name }}</h2>
+        <p class="font-italic">{{ invoice.get_invoice_type_display }}</p>
+        {{ invoice.total }}&euro;<br>
+        <time class="icon" id="four">
+            <strong></strong>
+            <span></span>
+            <em></em>
+        </time>
+        {% if user.invoice_user.user_class == "MG" %}
+        <form method="post" action="." style="margin-top: 10px">
+            {% csrf_token %}
+            <input type="hidden" name="invoice_id" value="{{ invoice.id }}">
+            <button class="btn btn-outline-info" type="submit">Pay</button>
+        </form>
+        {% endif %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                dateIconInit('{{ invoice.due_date|date:'d.m.Y' }}');
+            });
+        </script>
+    </div>
+    <div class="content-section">
+        <h3 class="mb-3">Info to pay the invoice</h3>
+        {% if invoice.invoice_type == 'WEB' %}
+            URL: <a href="{{ invoice.website }}" target="_blank">{{ invoice.website }}</a><br/>
+            Login: {{ invoice.login }}<br/>
+            Password: {{ invoice.password }}
+        {% elif invoice.invoice_type == 'CRD' %}
+            IBAN: {{ invoice.iban }}
+            Full name: {{ invoice.full_name }}
+        {% elif invoice.invoice_type == 'FIL' %}
+            File: {{ invoice.file }}
+        {% endif %}
+    </div>
 {% endblock content %}

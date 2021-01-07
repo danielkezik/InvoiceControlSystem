@@ -5,13 +5,14 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 class UserRegisterForm(UserCreationForm):
+    user_class = forms.ChoiceField(choices=User.USER_CLASS_CHOICES[1:])
     email = forms.EmailField()
     first_name = forms.CharField(max_length=150)
     last_name = forms.CharField(max_length=150)
 
     class Meta:
         model = DjangoUser
-        fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name']
+        fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'user_class']
 
 
 class AddBalanceForm(forms.Form):
@@ -27,6 +28,7 @@ class NewInvoiceForm(forms.ModelForm):
         initial=_step,
         required=False,
     )
+    due_date = forms.DateField(widget=forms.SelectDateWidget())
 
     class Meta:
         model = Invoice

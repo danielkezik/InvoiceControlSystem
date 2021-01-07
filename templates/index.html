@@ -1,4 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>{{ insert_me }}</h2>
+    {% load static %}
+    <img style="width:100%" src="{% static 'images/New-Wesite.png' %}" alt="New Website">
 {% endblock content %}

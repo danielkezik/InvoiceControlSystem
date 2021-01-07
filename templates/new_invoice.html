@@ -16,5 +16,20 @@
                 {% endif %}
             </div>
         </form>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                if (!$('#id_is_regular').checked) {
+                    $('#div_id_regularity').hide();
+                }
+                $('#id_is_regular').change(function () {
+                    if (this.checked) {
+                        $('#div_id_regularity').show();
+                    } else {
+                        $('#div_id_regularity').hide();
+
+                    }
+                });
+            });
+        </script>
     </div>
 {% endblock content %}
